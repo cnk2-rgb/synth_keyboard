@@ -76,7 +76,8 @@ const keyMap = {
 function attack (e) {
   const obj = keyMap[e.key]
   if (obj && !obj.pressed) {
-    synth.triggerAttack(obj.note, Tone.now())
+    console.log("note played", obj.note)
+    synth.triggerAttackRelease(obj.note)
     obj.pressed = true
   }
 }
