@@ -1,0 +1,36 @@
+<body></body>
+<script src="https://unpkg.com/tone"></script>
+<script src="https://cdn.jsdelivr.net/gh/netizenorg/netnet-standard-library/build/nn.min.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://algorithmicmusic.online/js/create-spectrum.js"></script>
+<script src="https://algorithmicmusic.online/js/create-waveform.js"></script>
+<script>
+/* global Tone, nn, d3, createWaveform, createSpectrum */
+const aaah = 'https://upload.wikimedia.org/wikipedia/commons/6/65/Open_front_unrounded_vowel.ogg'
+const sampler = new Tone.Sampler({
+  urls: { 'C4': aaah }
+})
+
+sampler.toDestination()
+
+// UI
+nn.create('label')
+  .content('press the "q" key to play the sample')
+  .addTo('body')
+
+nn.on('keydown', (e) => {
+  if (e.key === 'q') sampler.triggerAttack('C4')
+})
+
+nn.on('keyup', (e) => {
+  if (e.key === 'q') sampler.triggerRelease('C4')
+})
+
+
+// visualizations
+const wave = createWaveform()
+const spec = createSpectrum({ range: [0, 8000] })
+sampler.connect(wave)
+sampler.connect(spec)
+
+</script>
