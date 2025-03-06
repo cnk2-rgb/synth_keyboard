@@ -5,32 +5,56 @@
 <script src="https://algorithmicmusic.online/js/create-spectrum.js"></script>
 <script src="https://algorithmicmusic.online/js/create-waveform.js"></script>
 <script>
-/* global Tone, nn, d3, createWaveform, createSpectrum */
-const aaah = 'https://upload.wikimedia.org/wikipedia/commons/6/65/Open_front_unrounded_vowel.ogg'
-const sampler = new Tone.Sampler({
-  urls: { 'C4': aaah }
+const piano = new Tone.Sampler({
+  baseUrl: 'https://tonejs.github.io/audio/salamander/',
+  urls: {
+    'C4': 'C4.mp3',
+    'D#4': 'Ds4.mp3',
+    'F#4': 'Fs4.mp3',
+    'A4': 'A4.mp3'
+  },
+  release: 1
 })
 
-sampler.toDestination()
+piano.toDestination()
 
-// UI
 nn.create('label')
-  .content('press the "q" key to play the sample')
+  .content('use the "q" through "i" keys to play the  sampler')
   .addTo('body')
 
-nn.on('keydown', (e) => {
-  if (e.key === 'q') sampler.triggerAttack('C4')
-})
+const keyMap = {
+  q: { note: 'C4', pressed: false },
+  w: { note: 'D4', pressed: false },
+  e: { note: 'E4', pressed: false },
+  r: { note: 'F4', pressed: false },
+  t: { note: 'G4', pressed: false },
+  y: { note: 'A5', pressed: false },
+  u: { note: 'B5', pressed: false },
+  i: { note: 'C5', pressed: false }
+}
 
-nn.on('keyup', (e) => {
-  if (e.key === 'q') sampler.triggerRelease('C4')
-})
+function attack (e) {
+  const obj = keyMap[e.key]
+  if (obj && !obj.pressed) {
+    piano.triggerAttack(obj.note)
+    obj.pressed = true
+  }
+}
 
+function release (e) {
+  const obj = keyMap[e.key]
+  if (obj && obj.pressed) {
+    piano.triggerRelease(obj.note)
+    obj.pressed = false
+  }
+}
+
+// events listeners
+nn.on('keydown', attack)
+nn.on('keyup', release)
 
 // visualizations
 const wave = createWaveform()
-const spec = createSpectrum({ range: [0, 8000] })
-sampler.connect(wave)
-sampler.connect(spec)
-
+piano.connect(wave)
+  
 </script>
