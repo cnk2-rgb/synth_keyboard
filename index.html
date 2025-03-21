@@ -5,79 +5,76 @@
 <script src="https://algorithmicmusic.online/js/create-spectrum.js"></script>
 <script src="https://algorithmicmusic.online/js/create-waveform.js"></script>
 <script>
-// const piano = new Tone.Sampler({
-//   baseUrl: 'https://tonejs.github.io/audio/salamander/',
-//   urls: {
-//     'C4': 'C4.mp3',
-//     'D#4': 'Ds4.mp3',
-//     'F#4': 'Fs4.mp3',
-//     'A4': 'A4.mp3'
-//   },
-//   release: 1
-// })
-
-// piano.toDestination()
-  
-const synth = new Tone.PolySynth();
-synth.set({
-  portamento: 0,
-  oscillator: {
-    type: 'square4'
+const piano = new Tone.Sampler({
+  baseUrl: 'sampler/',
+  urls: {
+    'A3': 'A3.mp3'
   },
-  envelope: {
-    attack: 2,
-    decay: 1,
-    sustain: 0.2,
-    release: 2
-  }
-});
-const chorus = new Tone.Chorus(4, 2.5, 0.5);
-const gainNode = new Tone.Gain(0.5)
-const effect = new Tone.Reverb();
-const shift = new Tone.PitchShift(0);
-// const shift = new Tone.Phaser({
-//     frequency: 15,
-//     octaves: 1,
-//     baseFrequency: 1000
+  release: 1
+})
+
+piano.toDestination()
+  
+// const synth = new Tone.PolySynth();
+// synth.set({
+//   portamento: 0,
+//   oscillator: {
+//     type: 'square4'
+//   },
+//   envelope: {
+//     attack: 2,e
+//     decay: 1,
+//     sustain: 0.2,
+//     release: 2
+//   }
 // });
-synth.connect(chorus);
-chorus.connect(effect);
-effect.connect(shift);
-shift.connect(gainNode);
-gainNode.toDestination();
+// const chorus = new Tone.Chorus(4, 2.5, 0.5);
+// const gainNode = new Tone.Gain(0.5)
+// const effect = new Tone.Reverb();
+// const shift = new Tone.PitchShift(0);
+// // const shift = new Tone.Phaser({
+// //     frequency: 15,
+// //     octaves: 1,
+// //     baseFrequency: 1000
+// // });
+// synth.connect(chorus);
+// chorus.connect(effect);
+// effect.connect(shift);
+// shift.connect(gainNode);
+// gainNode.toDestination();
 
 
 nn.create('label')
   .content('use the "q" through "i" keys to play the  sampler')
   .addTo('body')
 
-// const keyMap = {
-//   q: { note: 'C4', pressed: false },
-//   w: { note: 'D4', pressed: false },
-//   e: { note: 'E4', pressed: false },
-//   r: { note: 'F4', pressed: false },
-//   t: { note: 'G4', pressed: false },
-//   y: { note: 'A5', pressed: false },
-//   u: { note: 'B5', pressed: false },
-//   i: { note: 'C5', pressed: false }
-// }
-
 const keyMap = {
-    q: { note: ['C4', 'E4', 'G4', 'C5'], pressed: false},
-    w: { note: ['D4', 'F4', 'G4', 'B4'], pressed: false},
-    e: { note: ['E4', 'G4', 'C5', 'E5'], pressed: false},
-    r: { note: ['F4', 'A4', 'C5', 'D5'], pressed: false},
-    t: { note: ['G4', 'B4', 'D5', 'G5'], pressed: false},
-    y: { note: ['A4', 'C5', 'F5', 'A5'], pressed: false},
-    u: { note: ['B4', 'D5', 'F5', 'G5'], pressed: false},
-    i: { note: ['C5', 'E5', 'G5', 'C6'], pressed: false},
+  q: { note: 'A3', pressed: false },
+  w: { note: 'D4', pressed: false },
+  e: { note: 'E4', pressed: false },
+  r: { note: 'F4', pressed: false },
+  t: { note: 'G4', pressed: false },
+  y: { note: 'A5', pressed: false },
+  u: { note: 'B5', pressed: false },
+  i: { note: 'C5', pressed: false }
 }
+
+// const keyMap = {
+//     q: { note: ['C4', 'E4', 'G4', 'C5'], pressed: false},
+//     w: { note: ['D4', 'F4', 'G4', 'B4'], pressed: false},
+//     e: { note: ['E4', 'G4', 'C5', 'E5'], pressed: false},
+//     r: { note: ['F4', 'A4', 'C5', 'D5'], pressed: false},
+//     t: { note: ['G4', 'B4', 'D5', 'G5'], pressed: false},
+//     y: { note: ['A4', 'C5', 'F5', 'A5'], pressed: false},
+//     u: { note: ['B4', 'D5', 'F5', 'G5'], pressed: false},
+//     i: { note: ['C5', 'E5', 'G5', 'C6'], pressed: false},
+// }
 
 function attack (e) {
   const obj = keyMap[e.key]
   if (obj && !obj.pressed) {
     console.log("note played", obj.note)
-    synth.triggerAttackRelease(obj.note)
+    piano.triggerAttack(obj.note)
     obj.pressed = true
   }
 }
@@ -85,7 +82,7 @@ function attack (e) {
 function release (e) {
   const obj = keyMap[e.key]
   if (obj && obj.pressed) {
-    synth.triggerRelease(obj.note, Tone.now())
+    piano.triggerRelease(obj.note, Tone.now())
     obj.pressed = false
   }
 }
